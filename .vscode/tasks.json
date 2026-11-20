@@ -1,0 +1,1 @@
+{"version":"2.0.0","tasks":[{"label":"Crew OS: build","type":"shell","command":"npm run build","group":"build","problemMatcher":[]},{"label":"Crew OS: dev","type":"shell","command":"npm run dev","isBackground":true,"problemMatcher":[]},{"label":"Crew OS: test","type":"shell","command":"npm test","group":"test","problemMatcher":[]}]}

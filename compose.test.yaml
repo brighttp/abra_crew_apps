@@ -1,0 +1,37 @@
+services:
+  test-db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: test-root-only
+      MYSQL_DATABASE: crew_os_test
+      MYSQL_USER: crew_os_test
+      MYSQL_PASSWORD: test-only-password
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'MYSQL_PWD=$$MYSQL_ROOT_PASSWORD mysqladmin ping -h localhost -u root --silent',
+        ]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+  tests:
+    image: node:24-bookworm-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+      - test_dependencies:/app/node_modules
+    environment:
+      DB_HOST: test-db
+      DB_NAME: crew_os_test
+      DB_USER: crew_os_test
+      DB_PASSWORD: test-only-password
+      SESSION_SECRET: test-only-session-secret-not-for-production
+    depends_on:
+      test-db:
+        condition: service_healthy
+    command: ['sh', '-c', 'npm ci && npm test && npm run test:integration']
+volumes:
+  test_dependencies:
